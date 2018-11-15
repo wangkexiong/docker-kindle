@@ -1,0 +1,29 @@
+language: python
+python:
+- 2.7
+
+if: tag IS present
+
+env:
+  global:
+  - COMMIT=${TRAVIS_COMMIT::8}
+  - REPO=wangkexiong/kindle
+  - secure: QNUCjzsKxSVuj/OFQbjryCjzCzNyqPbceta20KhINlW/zHwHnGZWQXQcmve479LJ7unmN0Q7WRwE2jxQJCiENgy/1Hd/IXNzd5jgqFe4IPFHQN9hJmTHcfGkZxb615nj1dEvzAdVGZX/x0LcN1ANVwW22ziRTOQx3bdketVKj57kIVW8VEDwLx/IBfIpCduJJgfQTDkyrAsCLwui/VKaDj72iMfKTx6Lb9hb+uGrxnQrxtEpuKk/OcYIopTJeHFT/O002ALiPVyRbadcfDB4AJeoJhApON2fC1FfIGgW2oaTOooxrmwa4t1MKVxY5hrc4voeaWmR2jewjoaFRYgR7ttPo7BG1uIOaK0N4cQL7cuXgRct8MYQSJPr9Fsp8qRnw8QPoSlzwVb6smqehvzcMplhsn3gf5uE+TrXHs2V41b7mjy4J2l2kCCGE2bnBsX3dKWZfglrtcwtPl39JXsENpc0sUdEdCdJ/lOPDgkvwHz+7arW8qnZoTsGQKcnWrTvYCnTqHAlUcmCevjggtMVIITyEky9hsm0kGNY5BDJV1NL30BGnTspavzp9TEJl5qYPqD06q3lA2uKoIweCwoj70XMG/plnnXN5bstQwIiAqIjGgOaZHHlpVP1y4iiRqJzA/pfwIXUxVj7pEP22a6ZFxKjGF7MYq1tX/9fe0K5YGY=
+  - secure: OVpM4owZ/HHipvISIIHmlJErEaOwQWMVLs6R4CcN7/mR/Nn+aqwmFRuspQOF/4hvLIiiypxfvN1csmn2GyZ3oFoILFLjsmc+fPTpZACU+ifU0USq4wWJmtnvWF8scP0PoG00FEuPrOOe+tNeJOLNF4litrYcjBD5GGBrf2i+dftxB76yBSFJI2V4DBHhzTwD7Ha0SKassxE2OgPXG3oVlEteILMKGsVaKlOQQOZRrALuQXiv0JTB4pnShlAPrPzt4MJG3CmAXw+0pGSg3AixhRdj76+AEqMWdLXjLRAWgP8SicitEj9FTy4lBnh3HPP949rsTk/vGNegFvcWPvCBn0taAVJwQcc/s3HA1aOwQb8e4alRYE5cPanqecXjznMif98gy6UwPBjHnXuEU46HZwwxfDzdfgsnZCgi2okf89Jl5WBFtzAGJZpi/qi8LxBwIfz79xcfitjUz6yyIrvmAa/61GoL/Kie9fnjDnMOYlD3ufshueGv1lBWVoiWONF97LNzzrLS04V0FKO43wGRNTOBum2hQSnX1dbHEqQbNrWiwAVTVnyXmRiZ9VtYmgfmuIDsKlV0Lfp4BnA3a5tKS2L/ZUpn5k89Ew9maQYtOPhAuJvoKa3QBLPtORdFykT5l169niotwL8IBFExNcegY5upVYJic8FoHGQLg8AW9Ws=
+
+services:
+- docker
+
+install:
+- docker build -t $REPO:$COMMIT .
+
+script:
+- docker run -t $REPO:$COMMIT -m
+
+after_success:
+- docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+- docker tag $REPO:$COMMIT $REPO:$TRAVIS_TAG
+- docker tag $REPO:$COMMIT $REPO:latest
+- docker push $REPO:$TRAVIS_TAG
+- docker push $REPO:latest
+
